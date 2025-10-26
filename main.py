@@ -1,6 +1,8 @@
 import uvicorn
+from starlette.responses import JSONResponse
 from helper import *
 from fastapi import Form
+from fastapi import FastAPI, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
@@ -57,6 +59,17 @@ def transfer_form(
 
     except Exception as e:
         return templates.TemplateResponse("index.html", {"request": request, "message": f"Error: {str(e)}", "message_type": "error"})
+
+
+@app.get("/received-transfers")
+def received_transfers(account_id: str = Query(...)):
+    # Validate account exists
+    account = get_account(account_id)
+    if not account:
+        return JSONResponse(content={"error": "Account not found"}, status_code=404)
+
+    transfers = get_received_transfers(account_id)
+    return JSONResponse(content={"account_id": account_id, "received_transfers": transfers})
 
 
 if __name__ == "__main__":

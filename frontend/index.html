@@ -88,6 +88,44 @@
 
             <button type="submit">Transfer</button>
         </form>
+        <h3>Check Received Transfers</h3>
+<form id="checkTransfersForm">
+    <label for="receiverAccount">Account ID:</label>
+    <input type="text" id="receiverAccount" placeholder="Enter your account ID" required>
+    <button type="submit">Check</button>
+</form>
+
+<div id="receivedTransfers"></div>
+
+<script>
+document.getElementById('checkTransfersForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const accountId = document.getElementById('receiverAccount').value;
+
+    try {
+        const res = await fetch(`/received-transfers?account_id=${accountId}`);
+        const data = await res.json();
+
+        const div = document.getElementById('receivedTransfers');
+        div.innerHTML = '';
+
+        if (data.received_transfers.length === 0) {
+            div.textContent = 'No received transfers.';
+        } else {
+            const ul = document.createElement('ul');
+            data.received_transfers.forEach(t => {
+                const li = document.createElement('li');
+                li.textContent = `From: ${t.from_account_id}, Amount: ${t.amount} ${t.currency}, Status: ${t.status}, Date: ${t.created_at}`;
+                ul.appendChild(li);
+            });
+            div.appendChild(ul);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+});
+</script>
+
 
         {% if message %}
             <div class="message {{ message_type }}">{{ message }}</div>

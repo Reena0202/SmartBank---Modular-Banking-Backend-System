@@ -150,3 +150,28 @@ def make_transfer(transfer: TransferRequest):
     finally:
         cursor.close()
         connect.close()
+
+def get_received_transfers(account_id: str):
+    connect = get_db_connection()
+    cursor = connect.cursor()
+    try:
+        cursor.execute(
+            "SELECT id, from_account_id, amount, currency, status, created_at "
+            "FROM transfers WHERE to_account_id=%s ORDER BY created_at DESC",
+            (account_id,)
+        )
+        transfers = [
+            {
+                "id": r[0],
+                "from_account_id": r[1],
+                "amount": float(r[2]),
+                "currency": r[3],
+                "status": r[4],
+                "created_at": str(r[5])
+            }
+            for r in cursor.fetchall()
+        ]
+        return transfers
+    finally:
+        cursor.close()
+        connect.close()
