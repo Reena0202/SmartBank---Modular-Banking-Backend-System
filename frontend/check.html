@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SmartBank - Check Received Transfers</title>
+    <title>Check Received Transfers</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,22 +15,23 @@
 
         .container {
             background: #fff;
-            padding: 40px;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             width: 400px;
+            text-align: center;
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 20px;
             color: #333;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
+            text-align: left;
             color: #555;
+            margin-bottom: 5px;
         }
 
         input {
@@ -56,39 +57,96 @@
             background: #0056b3;
         }
 
-        .result {
-            margin-top: 15px;
+        .message {
+            margin-top: 10px;
             padding: 10px;
             border-radius: 6px;
-            text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
-            background: #e9ecef;
         }
 
-        .link {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            text-decoration: none;
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .links {
+            margin-top: 15px;
+        }
+
+        .links a {
+            display: inline-block;
+            margin: 5px 10px;
             color: #007bff;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #f2f2f2;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Check Received Transfers</h2>
-        {% if transfers %}
-        <div class="result">
-            {% for t in transfers %}
-                <p><strong>From:</strong> {{ t.from_account_id }} <strong>Amount:</strong> {{ t.amount }} {{ t.currency }} <strong>Status:</strong> {{ t.status }}</p>
-            {% endfor %}
+        <form action="/check" method="post">
+            <label for="account">Enter Account Name or ID:</label>
+            <input type="text" id="account" name="account" placeholder="e.g. John Doe or A123" required>
+            <button type="submit">Check</button>
+        </form>
+
+        {% if message %}
+        <div class="message {{ message_type }}">
+            {{ message }}
         </div>
-        {% else %}
-            <p>No transfers found.</p>
         {% endif %}
-        <a class="link" href="/">Back to Home</a>
-        <a class="link" href="/transfer">Transfer Money</a>
+
+        {% if transfers and transfers|length > 0 %}
+        <table>
+            <tr>
+                <th>Transfer ID</th>
+                <th>From</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+            {% for t in transfers %}
+            <tr>
+                <td>{{ t.id }}</td>
+                <td>{{ t.from_account_id }}</td>
+                <td>{{ t.amount }}</td>
+                <td>{{ t.created_at }}</td>
+                <td>{{ t.status }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% elif transfers is defined %}
+        <p>No transfers found.</p>
+        {% endif %}
+
+        <div class="links">
+            <a href="/">Back to Home</a>
+            <a href="/transfer">Transfer Money</a>
+        </div>
     </div>
 </body>
 </html>
+

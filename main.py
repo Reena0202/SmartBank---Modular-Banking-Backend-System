@@ -21,10 +21,10 @@ class TransferRequest(BaseModel):
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-'''@app.get("/accounts")
+@app.get("/accounts")
 def get_accounts():
     accounts = list_accounts()
-    return JSONResponse(content=accounts)'''
+    return JSONResponse(content=accounts)
 
 
 @app.get("/transfer")
@@ -68,14 +68,41 @@ def transfer_form(
 def check_form(request: Request):
     return templates.TemplateResponse("check.html", {"request": request, "transfers": []})
 
-@app.get("/received-transfers")
+'''@app.get("/received-transfers")
 def received_transfers(account_id: str = Query(...)):
     account = get_account(account_id)
     if not account:
         return JSONResponse(content={"error": "Account not found"}, status_code=404)
 
     transfers = get_received_transfers(account_id)
-    return JSONResponse(content={"account_id": account_id, "received_transfers": transfers})
+    return JSONResponse(content={"account_id": account_id, "received_transfers": transfers})'''
+
+@app.post("/check")
+def check_transfers(request: Request, account: str = Form(...)):
+    try:
+        account_info = get_account(account)
+        if not account_info:
+            return templates.TemplateResponse(
+                "check.html",
+                {"request": request, "message": f"Account '{account}' not found", "message_type": "error"}
+            )
+
+        transfers = get_received_transfers(account_info["id"])
+        if not transfers:
+            return templates.TemplateResponse(
+                "check.html",
+                {"request": request, "message": "No transfers found for this account.", "message_type": "error", "transfers": []}
+            )
+
+        return templates.TemplateResponse(
+            "check.html",
+            {"request": request, "message": f"Found {len(transfers)} transfer(s).", "message_type": "success", "transfers": transfers}
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            "check.html",
+            {"request": request, "message": f"Error: {str(e)}", "message_type": "error"}
+        )
 
 
 if __name__ == "__main__":
