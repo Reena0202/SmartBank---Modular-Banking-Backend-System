@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SmartBank - Money Transfer</title>
+    <title>SmartBank - Home</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,189 +15,39 @@
 
         .container {
             background: #fff;
-            padding: 30px;
+            padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            width: 400px;
+            text-align: center;
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 20px;
             color: #333;
+            margin-bottom: 30px;
         }
 
-        label {
+        a {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
+            padding: 15px 25px;
+            margin: 10px 0;
+            text-decoration: none;
             background: #007bff;
             color: white;
-            font-size: 16px;
             border-radius: 6px;
-            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
         }
 
-        button:hover {
+        a:hover {
             background: #0056b3;
-        }
-
-        .message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Money Transfer</h2>
-        <form method="post" action="/transfer">
-            <label for="fromAccount">From Account (ID or Name):</label>
-            <input type="text" name="from_account" id="fromAccount" placeholder="Enter sender account ID or name" required>
-
-            <label for="toAccount">To Account (ID or Name):</label>
-            <input type="text" name="to_account" id="toAccount" placeholder="Enter receiver account ID or name" required>
-
-            <label for="amount">Amount (INR):</label>
-            <input type="number" name="amount" id="amount" placeholder="Enter amount" required min="1" step="0.01">
-
-            <button type="submit">Transfer</button>
-        </form>
-        <h3>Check Received Transfers</h3>
-<form id="checkTransfersForm">
-    <label for="receiverAccount">Account ID:</label>
-    <input type="text" id="receiverAccount" placeholder="Enter your account ID" required>
-    <button type="submit">Check</button>
-</form>
-
-<div id="receivedTransfers"></div>
-
-<script>
-document.getElementById('checkTransfersForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const accountId = document.getElementById('receiverAccount').value;
-
-    try {
-        const res = await fetch(`/received-transfers?account_id=${accountId}`);
-        const data = await res.json();
-
-        const div = document.getElementById('receivedTransfers');
-        div.innerHTML = '';
-
-        if (data.received_transfers.length === 0) {
-            div.textContent = 'No received transfers.';
-        } else {
-            const ul = document.createElement('ul');
-            data.received_transfers.forEach(t => {
-                const li = document.createElement('li');
-                li.textContent = `From: ${t.from_account_id}, Amount: ${t.amount} ${t.currency}, Status: ${t.status}, Date: ${t.created_at}`;
-                ul.appendChild(li);
-            });
-            div.appendChild(ul);
-        }
-    } catch (err) {
-        console.error(err);
-    }
-});
-</script>
-
-
-        {% if message %}
-            <div class="message {{ message_type }}">{{ message }}</div>
-        {% endif %}
-
-        <div id="message" class="message" style="display:none;"></div>
+        <h2>Welcome to SmartBank</h2>
+        <a href="/transfer">Transfer Money</a>
+        <a href="/check">Check Received Transfers</a>
     </div>
-
-    <script>
-        const fromAccountSelect = document.getElementById('fromAccount');
-        const toAccountSelect = document.getElementById('toAccount');
-        const messageDiv = document.getElementById('message');
-
-        // Fetch accounts to populate the dropdowns
-        async function loadAccounts() {
-            try {
-                const res = await fetch('/accounts');
-                const accounts = await res.json();
-
-                accounts.forEach(account => {
-                    const option1 = document.createElement('option');
-                    option1.value = account.id;
-                    option1.textContent = `${account.name} (Balance: ${account.balance})`;
-                    fromAccountSelect.appendChild(option1);
-
-                    const option2 = document.createElement('option');
-                    option2.value = account.id;
-                    option2.textContent = `${account.name} (Balance: ${account.balance})`;
-                    toAccountSelect.appendChild(option2);
-                });
-            } catch (err) {
-                showMessage('Error loading accounts', 'error');
-            }
-        }
-
-        function showMessage(msg, type) {
-            messageDiv.textContent = msg;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-        }
-
-        document.getElementById('transferForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const payload = {
-                from_account_id: fromAccountSelect.value,
-                to_account_id: toAccountSelect.value,
-                amount: parseFloat(document.getElementById('amount').value)
-            };
-
-            try {
-                const res = await fetch('/transfers', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    showMessage(`Success! Transfer ID: ${data.transfer_id}`, 'success');
-                } else {
-                    showMessage(`Error: ${data.detail}`, 'error');
-                }
-
-            } catch (err) {
-                showMessage('Server error. Try again later.', 'error');
-            }
-        });
-
-        // Load accounts on page load
-        loadAccounts();
-    </script>
 </body>
 </html>

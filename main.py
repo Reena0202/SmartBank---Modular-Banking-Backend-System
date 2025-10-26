@@ -21,11 +21,15 @@ class TransferRequest(BaseModel):
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-''''@app.get("/accounts")
+'''@app.get("/accounts")
 def get_accounts():
     accounts = list_accounts()
     return JSONResponse(content=accounts)'''
 
+
+@app.get("/transfer")
+def transfer_form(request: Request):
+    return templates.TemplateResponse("transfer.html", {"request": request})
 
 @app.post("/transfer")
 def transfer_form(
@@ -60,10 +64,12 @@ def transfer_form(
     except Exception as e:
         return templates.TemplateResponse("index.html", {"request": request, "message": f"Error: {str(e)}", "message_type": "error"})
 
+@app.get("/check")
+def check_form(request: Request):
+    return templates.TemplateResponse("check.html", {"request": request, "transfers": []})
 
 @app.get("/received-transfers")
 def received_transfers(account_id: str = Query(...)):
-    # Validate account exists
     account = get_account(account_id)
     if not account:
         return JSONResponse(content={"error": "Account not found"}, status_code=404)

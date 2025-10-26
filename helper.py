@@ -23,7 +23,7 @@ def get_db_connection():
         autocommit=False
     )
 
-'''def list_accounts():
+def list_accounts():
     connect = get_db_connection()
     cursor = connect.cursor()
     cursor.execute("SELECT id, name, balance, daily_limit FROM accounts")
@@ -33,7 +33,7 @@ def get_db_connection():
     ]
     cursor.close()
     connect.close()
-    return accounts'''
+    return accounts
 
 
 def get_account(identifier: str):
