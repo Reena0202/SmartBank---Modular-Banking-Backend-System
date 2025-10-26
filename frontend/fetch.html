@@ -1,0 +1,16 @@
+<select id="account-select"></select>
+
+<script>
+fetch("/accounts")
+  .then(res => res.json())
+  .then(data => {
+      const select = document.getElementById("account-select");
+      data.forEach(account => {
+          const option = document.createElement("option");
+          option.value = account.id;
+          option.textContent = account.name + " (" + account.balance + ")";
+          select.appendChild(option);
+      });
+  })
+  .catch(err => console.error("Error loading accounts:", err));
+</script>
