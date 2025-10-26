@@ -38,9 +38,10 @@ OBJECTIVE -  to build a secure scalable backend system that supports core bankin
 |                      FastAPI Backend Server                   |
 |---------------------------------------------------------------|
 | [1] Receive Request                                            |
-|      → Validate input          |
+|      → Validate input                                          |
 |                                                                |
 | [2] Business Validation Layer                                  |
+|      → Check Customer exists                                                    
 |      → Check sender & receiver accounts exist and ACTIVE       |
 |      → Validate balance and daily limits                       |
 |                                                                |
@@ -60,6 +61,9 @@ OBJECTIVE -  to build a secure scalable backend system that supports core bankin
 |                                                                |
 | [5] Response Handling                                          |
 |      → Return success/failure JSON to client                   |
+| [6] Validate from receiver's end                               |
+|      → Validation from receivers end for received amount       |
+
 
                           
 
