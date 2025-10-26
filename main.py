@@ -10,7 +10,7 @@ from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI(title="SmartBank Banking System")
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+app.mount("/frontend", StaticFiles(directory="frontend", html=True), name="frontend")
 templates = Jinja2Templates(directory = "frontend")
 
 class TransferRequest(BaseModel):
